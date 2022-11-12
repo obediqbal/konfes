@@ -32,6 +32,8 @@ async def _send_message(interaction: discord.Interaction, message: str):
     await newhook.send(content=message, avatar_url=avatar_url, username=name)
     # await newhook.send(content=message, avatar_url='https://i.imgur.com/dOzAFCx.png', username='ini percobaan')
     await newhook.delete()
+
+    await interaction.delete()
     # await interaction.response.send_message('anjayy',ephemeral=True)
 
 @bot.command()
