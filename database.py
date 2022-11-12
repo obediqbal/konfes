@@ -1,8 +1,13 @@
 import pymongo
 from avatar import Avatar
+import json
+
+with open('auth.json') as file:
+    data = json.load(file)
+    CONNECTION_STRING = data['connection_string']
+
 
 def get_db(name:str ='discord') -> pymongo.database.Database:
-    CONNECTION_STRING = 'mongodb+srv://obediqbal:obedganteng2@cluster0.rxqwuvv.mongodb.net/test'
     client = pymongo.MongoClient(CONNECTION_STRING)
 
     return client[name]
