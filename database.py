@@ -22,15 +22,30 @@ def update_avatar_to_db(avatar: Avatar) -> None:
     avatars_col = _global.dc_db['avatars']
 
     avatar_json = avatar.dumps()
-    query = {"_id": avatar_json.get('_id')}
+    query = {'_id': avatar_json.get('_id')}
     avatars_col.update_one(query, {'$set': avatar_json})
 
     update_dc_db()
-    
 
+
+def get_avatar_from_db(user_id: int) -> Avatar:
+    avatars_col = _global.dc_db['avatars']
+
+    query = {'_id': str(user_id)}
+    json_avatar = avatars_col.find_one(query)
+
+    if(json_avatar == None):
+        avatar = None
+    else:
+        avatar = Avatar.loads(json_avatar)
+
+    return avatar
+
+    
 # update_dc_db()
 
 # avatars_col = _global.dc_db['avatars']
+# print(avatars_col.find_one({'_id': '555'}))
 # new_avatar = Avatar(555)
 # # detail = {8: ('rezapu', 'https://yahoo.com')}
 # detail = {55: {
