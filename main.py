@@ -11,21 +11,28 @@ with open('auth.json') as file:
     TOKEN = data['token']
 
 bot = commands.Bot(intents= discord.Intents.all(), command_prefix='/') #define command decorator
+db.update_dc_db()
+
 
 @bot.event
 async def on_message(message):
     await bot.process_commands(message)
 
-# @bot.command(pass_context=True) #define the first command and set prefix to '!'
-# async def rename(ctx, name):
 
 @bot.slash_command(name='send', description='Send a message anonymously through your avatar')
 async def _send_message(interaction: discord.Interaction, message: str):
-    # avatar = discord.Asset(state='',url='https://i.imgur.com/dOzAFCx.png')
-    newhook = await interaction.channel.create_webhook()
-    await newhook.send(content=message, avatar_url='https://i.imgur.com/dOzAFCx.png', username='ini percobaan')
+    avatar = db.get_avatar_from_db(interaction.user.id)
+    if(avatar == None):
+        avatar = Avatar(interaction.user.id)
+    if(not avatar.is_defined_in_guild(interaction.guild)):
+        avatar.set_detail_in_guild('Anonymous', 'https://i.imgur.com/dOzAFCx.png', interaction.guild)
+    (name, avatar_url) = avatar.get_detail_in_guild(interaction.guild)
+
+    newhook = await interaction.channel.create_webhook(name = name)
+    await newhook.send(content=message, avatar_url=avatar_url, username=name)
+    # await newhook.send(content=message, avatar_url='https://i.imgur.com/dOzAFCx.png', username='ini percobaan')
     await newhook.delete()
-    await interaction.response.send_message('anjayy',ephemeral=True)
+    # await interaction.response.send_message('anjayy',ephemeral=True)
 
 @bot.command()
 async def ping(ctx):
