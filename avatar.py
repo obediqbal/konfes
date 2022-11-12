@@ -20,23 +20,25 @@ class Avatar:
         return guild.get_member(self._user_id)
 
 
-    def get_details_in_guild(self, guild: discord.Guild) -> tuple[str, str]:
-        guild_id = guild.id
-        return (self.details.get(guild_id).get('name'), self.details.get(guild_id).get('asset_url'))
+    def get_detail_in_guild(self, guild: discord.Guild) -> tuple:
+        # guild_id = guild.id
+        # return (self.details.get(guild_id).get('name'), self.details.get(guild_id).get('asset_url'))
+        detail = self.details.get(guild.id)
+        return tuple(detail.get(key) for key in detail)
 
 
     def is_defined_in_guild(self, guild: discord.Guild) -> bool:
         return guild.id in self.details.keys()
 
 
-    @overload
+    # @overload
     def set_detail_in_guild(self, name: str, asset_url: str, guild: discord.Guild) -> None:
         detail = {guild.id: {'name':name, 'asset_url':asset_url}}
         self.details.update(detail)
 
 
-    def set_detail_in_guild(self, detail:dict[int, str]) -> None:
-        self.details.update(detail)
+    # def set_detail_in_guild(self, detail:dict[int, str]) -> None:
+    #     self.details.update(detail)
 
 
     def dumps(self) -> dict:
