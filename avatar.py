@@ -35,7 +35,7 @@ class Avatar:
         self.details.update(detail)
 
 
-    def set_detail_in_guild(self, detail:tuple[str, str]) -> None:
+    def set_detail_in_guild(self, detail:dict[int, str]) -> None:
         self.details.update(detail)
 
 
