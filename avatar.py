@@ -20,7 +20,7 @@ class Avatar:
         return guild.get_member(self._user_id)
 
 
-    def get_details_on_guild(self, guild: discord.Guild) -> tuple[str, str]:
+    def get_details_in_guild(self, guild: discord.Guild) -> tuple[str, str]:
         guild_id = guild.id
         return (self.details.get(guild_id).name, self.details.get(guild_id).asset_url)
 
@@ -44,4 +44,16 @@ class Avatar:
 
         return {'_id': str(self._user_id), 'details': json_details}
 
-    # def loads(self, ) -> None:
+
+    @staticmethod
+    def loads(json_avatar: dict):
+        new = Avatar(0)
+        new._user_id = int(json_avatar.get('_id'))
+        temp = tuple()
+
+        for key in json_avatar.get('details'):
+            for item in json_avatar.get('details').values():
+                temp += tuple(item)
+            new.details.update({int(key): temp})
+        return new
+
