@@ -9,7 +9,7 @@ class Messaging(commands.Cog):
         self.bot = bot
 
 
-    @discord.commands.guild_only()
+    @commands.guild_only()
     @discord.slash_command(name='send', description='Send a message anonymously through your avatar')
     async def _send_message(self, interaction: discord.Interaction, message: str):
         avatar = db.get_avatar_from_db(interaction.user.id)
