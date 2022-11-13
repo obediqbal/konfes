@@ -28,7 +28,6 @@ class Messaging(commands.Cog):
 
     @commands.command()
     async def ping(self, ctx):
-        await ctx.guild.me.edit(nick='Pinger')
         await ctx.send('Pong!')
 
 
