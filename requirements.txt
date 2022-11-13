@@ -1,0 +1,2 @@
+pymongo==4.3.2
+py-cord==2.2.2
