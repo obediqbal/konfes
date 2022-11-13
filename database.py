@@ -5,7 +5,9 @@ import os
 import _global
 
 if (os.environ.get('IS_HEROKU', None)):
+    print('working')
     CONNECTION_STRING = os.getenv('connection_string')
+    print(CONNECTION_STRING)
 else:
     with open('auth.json') as file:
         data = json.load(file)
