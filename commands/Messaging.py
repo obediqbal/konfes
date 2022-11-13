@@ -16,21 +16,59 @@ class Messaging(commands.Cog):
         description = 'Enter your message',
         required = True
     )
-    async def _send_message(self, interaction: discord.Interaction, message: str):
-        avatar = db.get_avatar_from_db(interaction.user.id)
+    async def _send_message(self, ctx: discord.ApplicationContext, message: str):
+        avatar = db.get_avatar_from_db(ctx.user.id)
         if(avatar == None): # User has never used the bot
-            avatar = Avatar(interaction.user.id)
+            avatar = Avatar(ctx.user.id)
             db.insert_avatar_to_db(avatar)
-        if(not avatar.is_defined_in_guild(interaction.guild)): # User has never used the bot in this guild
-            avatar.set_detail_in_guild('Anonymous', '', interaction.guild)
+        if(not avatar.is_defined_in_guild(ctx.guild)): # User has never used the bot in this guild
+            avatar.set_detail_in_guild('Anonymous', '', ctx.guild)
         db.update_avatar_to_db(avatar)
 
-        (name, avatar_url) = avatar.get_detail_in_guild(interaction.guild)
-        newhook = await interaction.channel.create_webhook(name = name)
+        (name, avatar_url) = avatar.get_detail_in_guild(ctx.guild)
+        newhook = await ctx.channel.create_webhook(name = name)
         await newhook.send(content=message, avatar_url=avatar_url, username=name)
 
         await newhook.delete()
-        await interaction.delete()
+        await ctx.delete()
+
+
+    @commands.guild_only()
+    @discord.slash_command(name='avatar', description='Setup the configuration of your avatar')
+    @discord.commands.option(
+        'nickname',
+        description = 'This is the name that appears when sending messages',
+        required = False,
+        default = None
+    )
+    @discord.commands.option(
+        'avatar_url',
+        description = 'This is the profile picture of your avatar',
+        required = False,
+        default = None
+    )
+    async def _set_avatar(self, ctx: discord.ApplicationContext, nickname:str, avatar_url:str):
+        if(nickname == None and avatar_url==None):
+            await ctx.delete()
+            return
+
+        avatar = db.get_avatar_from_db(ctx.user.id)
+        if(avatar == None): # User has never used the bot
+            avatar = Avatar(ctx.user.id)
+            db.insert_avatar_to_db(avatar)
+        if(not avatar.is_defined_in_guild(ctx.guild)): # User has never used the bot in this guild
+            avatar.set_detail_in_guild('Anonymous', '', ctx.guild)
+
+        new_name, new_avatar_url = avatar.get_detail_in_guild(ctx.guild)
+        if(nickname != None):
+            new_name = nickname
+        if(avatar_url != None):
+            new_avatar_url = avatar_url
+        avatar.set_detail_in_guild(new_name, new_avatar_url, ctx.guild)
+        
+        db.update_avatar_to_db(avatar)
+
+        await ctx.interaction.response.send_message(content='Your avatar has been successfully reconfigured!', ephemeral=True)
 
 
     @commands.command()
@@ -39,9 +77,12 @@ class Messaging(commands.Cog):
 
 
     @_send_message.error
-    async def _send_message_error(self, interaction:discord.Interaction, error):
+    @_set_avatar.error
+    async def private_message_error(self, interaction:discord.Interaction, error):
         if isinstance(error, commands.errors.NoPrivateMessage):
             await interaction.response.send_message(error)
+        else:
+            print(error)
 
 
 def setup(bot: discord.Bot):
