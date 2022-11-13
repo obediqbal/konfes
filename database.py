@@ -28,6 +28,15 @@ def update_avatar_to_db(avatar: Avatar) -> None:
     update_dc_db()
 
 
+def insert_avatar_to_db(avatar: Avatar) -> None:
+    avatars_col = _global.dc_db['avatars']
+
+    avatar_json = avatar.dumps()
+    avatars_col.insert_one(avatar_json)
+
+    update_dc_db()
+
+
 def get_avatar_from_db(user_id: int) -> Avatar:
     avatars_col = _global.dc_db['avatars']
 
