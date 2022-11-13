@@ -13,12 +13,15 @@ class Messaging(commands.Cog):
     @discord.slash_command(name='send', description='Send a message anonymously through your avatar')
     async def _send_message(self, interaction: discord.Interaction, message: str):
         avatar = db.get_avatar_from_db(interaction.user.id)
-        if(avatar == None):
-            avatar = Avatar(interaction.user.id)
-        if(not avatar.is_defined_in_guild(interaction.guild)):
-            avatar.set_detail_in_guild('Anonymous', 'https://i.imgur.com/dOzAFCx.png', interaction.guild)
-        (name, avatar_url) = avatar.get_detail_in_guild(interaction.guild)
 
+        if(avatar == None): # User has never used the bot
+            avatar = Avatar(interaction.user.id)
+            db.insert_avatar_to_db(avatar)
+        if(not avatar.is_defined_in_guild(interaction.guild)): # User has never used the bot in this guild
+            avatar.set_detail_in_guild('Anonymous', 'https://i.imgur.com/dOzAFCx.png', interaction.guild)
+        db.update_avatar_to_db(avatar)
+
+        (name, avatar_url) = avatar.get_detail_in_guild(interaction.guild)
         newhook = await interaction.channel.create_webhook(name = name)
         await newhook.send(content=message, avatar_url=avatar_url, username=name)
 
