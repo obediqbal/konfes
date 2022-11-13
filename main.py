@@ -2,6 +2,7 @@ import asyncio
 import discord
 from discord import Webhook
 from discord.ext import commands
+import os
 import database as db
 import json
 
@@ -18,8 +19,13 @@ class Bot(commands.Bot):
 
 
 if __name__ == '__main__':
-    with open('auth.json') as file:
-        data = json.load(file)
-        TOKEN = data['token']
+    if (os.environ.get('IS_HEROKU', None)):
+        TOKEN = os.getenv('token')
+    else:
+        with open('auth.json') as file:
+            data = json.load(file)
+            TOKEN = data['token']
+    
+
     bot = Bot()
     bot.run(TOKEN) #run the client using using my bot's token

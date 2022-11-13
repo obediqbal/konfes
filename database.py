@@ -1,11 +1,15 @@
 import pymongo
 from avatar import Avatar
 import json
+import os
 import _global
 
-with open('auth.json') as file:
-    data = json.load(file)
-    CONNECTION_STRING = data['connection_string']
+if (os.environ.get('IS_HEROKU', None)):
+    CONNECTION_STRING = os.getenv('connection_string')
+else:
+    with open('auth.json') as file:
+        data = json.load(file)
+        CONNECTION_STRING = data['connection_string']
 
 
 def update_dc_db():
