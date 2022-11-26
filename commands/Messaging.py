@@ -2,7 +2,9 @@ import discord
 from discord import Webhook
 from discord.ext import commands
 from avatar import Avatar
+from random import randint
 import database as db
+import traceback
 
 #https://i.imgur.com/dOzAFCx.png
 class Messaging(commands.Cog):
@@ -17,19 +19,12 @@ class Messaging(commands.Cog):
         required = True
     )
     async def _send_message(self, ctx: discord.ApplicationContext, message: str):
-        avatar = db.get_avatar_from_db(ctx.user.id)
-        if(avatar == None): # User has never used the bot
-            avatar = Avatar(ctx.user.id)
-            db.insert_avatar_to_db(avatar)
-        if(not avatar.is_defined_in_guild(ctx.guild)): # User has never used the bot in this guild
-            avatar.set_detail_in_guild('Anonymous', '', ctx.guild)
-        db.update_avatar_to_db(avatar)
+        avatar = db.init_avatar_from_db(ctx)
+        webhook = await Avatar.get_webhook(ctx)
 
-        (name, avatar_url) = avatar.get_detail_in_guild(ctx.guild)
-        newhook = await ctx.channel.create_webhook(name = name)
-        await newhook.send(content=message, avatar_url=avatar_url, username=name)
-
-        await newhook.delete()
+        (name, avatar_url, *other) = avatar.get_detail_in_guild(ctx.guild)
+        
+        await webhook.send(content=message, avatar_url=avatar_url, username=name)
         await ctx.delete()
 
 
@@ -52,14 +47,9 @@ class Messaging(commands.Cog):
             await ctx.delete()
             return
 
-        avatar = db.get_avatar_from_db(ctx.user.id)
-        if(avatar == None): # User has never used the bot
-            avatar = Avatar(ctx.user.id)
-            db.insert_avatar_to_db(avatar)
-        if(not avatar.is_defined_in_guild(ctx.guild)): # User has never used the bot in this guild
-            avatar.set_detail_in_guild('Anonymous', '', ctx.guild)
+        avatar = db.init_avatar_from_db(ctx)
 
-        new_name, new_avatar_url = avatar.get_detail_in_guild(ctx.guild)
+        new_name, new_avatar_url, *other = avatar.get_detail_in_guild(ctx.guild)
         if(nickname != None):
             new_name = nickname
         if(avatar_url != None):
@@ -82,7 +72,7 @@ class Messaging(commands.Cog):
         if isinstance(error, commands.errors.NoPrivateMessage):
             await interaction.response.send_message(error)
         else:
-            print(error)
+            traceback.print_exc()
 
 
 def setup(bot: discord.Bot):
