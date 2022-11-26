@@ -2,6 +2,9 @@ import discord
 import json
 from typing import overload
 
+DEFINED_KEYS = ['name', 'asset_url']
+# AVATAR_TEMPLATE = {}
+
 class Avatar:
     def __init__(self, user_id: int) -> None:
         """Create an instance of Avatar with no details"""
@@ -36,14 +39,9 @@ class Avatar:
         return guild.id in self.details.keys()
 
 
-    # @overload
-    def set_detail_in_guild(self, name: str, asset_url: str, guild: discord.Guild) -> None:
-        detail = {guild.id: {'name':name, 'asset_url':asset_url}}
+    def set_detail_in_guild(self, guild: discord.Guild, **kwargs) -> None:
+        detail = {guild.id: kwargs}
         self.details.update(detail)
-
-
-    # def set_detail_in_guild(self, detail:dict[int, str]) -> None:
-    #     self.details.update(detail)
 
 
     def dumps(self) -> dict:
@@ -64,6 +62,18 @@ class Avatar:
         return new
 
 
+    @staticmethod
+    async def get_webhook(ctx: discord.ApplicationContext) -> discord.Webhook:
+        webhooks = await ctx.channel.webhooks()
+        webhook = [x for x in webhooks if x.name == 'konfes']
+        if len(webhook)==0:
+            webhook = await ctx.channel.create_webhook(name = 'konfes')
+        else:
+            webhook = webhook[0]
+
+        return webhook
+
+
     # @staticmethod
     # def parse(user: discord.user.User):
     #     new = Avatar(0)
@@ -72,4 +82,3 @@ class Avatar:
     #     new.details = {}
 
     #     return new
-
