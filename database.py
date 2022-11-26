@@ -1,4 +1,5 @@
 import pymongo
+import discord
 from avatar import Avatar
 import json
 import os
@@ -41,6 +42,19 @@ def insert_avatar_to_db(avatar: Avatar) -> None:
     avatars_col.insert_one(avatar_json)
 
     update_dc_db()
+
+
+def init_avatar_from_db(ctx: discord.ApplicationContext) -> Avatar:
+    avatar = get_avatar_from_db(ctx.user.id)
+    if(avatar == None): # User has never used the bot
+        avatar = Avatar(ctx.user.id)
+        insert_avatar_to_db(avatar)
+
+    if(not avatar.is_defined_in_guild(ctx.guild)): # User has never used the bot in this guild
+        avatar.set_detail_in_guild(ctx.guild, name='Anonymous', asset_url='')
+        update_avatar_to_db(avatar)
+
+    return avatar
 
 
 def get_avatar_from_db(user_id: int) -> Avatar:
