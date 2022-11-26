@@ -54,7 +54,7 @@ class Messaging(commands.Cog):
             new_name = nickname
         if(avatar_url != None):
             new_avatar_url = avatar_url
-        avatar.set_detail_in_guild(new_name, new_avatar_url, ctx.guild)
+        avatar.set_detail_in_guild(ctx.guild, name=new_name, asset_url=new_avatar_url)
         
         db.update_avatar_to_db(avatar)
 
