@@ -5,6 +5,8 @@ from discord.ext import commands
 import os
 import database as db
 import json
+from server import start_server
+
 
 class Bot(commands.Bot):
     def __init__(self) -> None:
@@ -17,8 +19,7 @@ class Bot(commands.Bot):
         print('Logged in as:')
         print(self.user.name)
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     if (os.environ.get('IS_HEROKU', None)):
         TOKEN = os.getenv('token')
     else:
@@ -26,6 +27,8 @@ if __name__ == '__main__':
             data = json.load(file)
             TOKEN = data['token']
     
-
     bot = Bot()
+    
+    start_server()
     bot.run(TOKEN) #run the client using using my bot's token
+
