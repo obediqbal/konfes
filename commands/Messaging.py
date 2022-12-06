@@ -24,6 +24,7 @@ class Messaging(commands.Cog):
 
         (name, avatar_url, *other) = avatar.get_detail_in_guild(ctx.guild)
         
+        print('coba')
         await webhook.send(content=message, avatar_url=avatar_url, username=name)
         await ctx.delete()
 
