@@ -9,4 +9,4 @@ COPY . .
 
 ENV PORT 8080
 
-CMD python .\src\main.py
+CMD python ./src/main.py
