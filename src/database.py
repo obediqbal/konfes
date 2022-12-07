@@ -5,14 +5,12 @@ import json
 import os
 import _global as _global
 
-if (os.environ.get('IS_HEROKU', None)):
+if (os.getenv('PROD') == True):
     print('working')
-    CONNECTION_STRING = os.getenv('connection_string')
+    CONNECTION_STRING = os.getenv('CONNECTION_STRING')
     print(CONNECTION_STRING)
 else:
-    with open('./src/auth.json') as file:
-        data = json.load(file)
-        CONNECTION_STRING = data['connection_string']
+    CONNECTION_STRING = os.getenv('CONNECTION_STRING')
 
 
 def update_dc_db():

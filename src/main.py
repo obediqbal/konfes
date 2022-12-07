@@ -6,6 +6,7 @@ import os
 import database as db
 import json
 from server import start_server
+from dotenv import load_dotenv
 
 
 class Bot(commands.Bot):
@@ -20,13 +21,12 @@ class Bot(commands.Bot):
         print(self.user.name)
 
 if __name__ == "__main__":
-    if (os.environ.get('IS_HEROKU', None)):
-        TOKEN = os.getenv('token')
+    load_dotenv('.env')
+    if (os.getenv('PROD') == True):
+        TOKEN = os.getenv('TOKEN')
     else:
-        with open('./src/auth.json') as file:
-            data = json.load(file)
-            TOKEN = data['token']
-    
+        TOKEN = os.getenv('TOKEN')
+
     bot = Bot()
     
     start_server()

@@ -1,3 +1,4 @@
 pymongo
 py-cord
 flask
+python-dotenv
