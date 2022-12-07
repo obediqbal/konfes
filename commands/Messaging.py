@@ -19,14 +19,13 @@ class Messaging(commands.Cog):
         required = True
     )
     async def _send_message(self, ctx: discord.ApplicationContext, message: str):
+        await ctx.delete()
         avatar = db.init_avatar_from_db(ctx)
         webhook = await Avatar.get_webhook(ctx)
 
         (name, avatar_url, *other) = avatar.get_detail_in_guild(ctx.guild)
         
-        print('coba')
         await webhook.send(content=message, avatar_url=avatar_url, username=name)
-        await ctx.delete()
 
 
     @commands.guild_only()
