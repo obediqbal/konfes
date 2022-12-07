@@ -23,7 +23,7 @@ if __name__ == "__main__":
     if (os.environ.get('IS_HEROKU', None)):
         TOKEN = os.getenv('token')
     else:
-        with open('auth.json') as file:
+        with open('./src/auth.json') as file:
             data = json.load(file)
             TOKEN = data['token']
     
