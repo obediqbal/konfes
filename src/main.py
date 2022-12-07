@@ -21,10 +21,10 @@ class Bot(commands.Bot):
         print(self.user.name)
 
 if __name__ == "__main__":
-    load_dotenv('.env')
     if (os.getenv('PROD') == True):
         TOKEN = os.getenv('TOKEN')
     else:
+        load_dotenv('.env')
         TOKEN = os.getenv('TOKEN')
 
     bot = Bot()
