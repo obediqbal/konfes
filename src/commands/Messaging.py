@@ -28,7 +28,7 @@ class Messaging(commands.Cog):
         default = ''
     )
     async def _send_message(self, ctx: discord.ApplicationContext, message: str, attachments: str):
-        await ctx.delete()
+        await ctx.interaction.response.defer(ephemeral=True)
         avatar = db.init_avatar_from_db(ctx)
         webhook = await Avatar.get_webhook(ctx)
 
@@ -47,6 +47,7 @@ class Messaging(commands.Cog):
         print(files)
 
         await webhook.send(content=message, avatar_url=avatar_url, username=name, files=files)
+        await ctx.interaction.followup.send(content='Message sent!', ephemeral=True, delete_after=1.0)
 
 
     @commands.guild_only()
