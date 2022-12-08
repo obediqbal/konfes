@@ -5,6 +5,8 @@ from avatar import Avatar
 from random import randint
 import database as db
 import traceback
+import aiohttp
+import io
 
 #https://i.imgur.com/dOzAFCx.png
 class Messaging(commands.Cog):
@@ -14,18 +16,34 @@ class Messaging(commands.Cog):
     @commands.guild_only()
     @discord.slash_command(name='send', description='Send a message anonymously through your avatar')
     @discord.commands.option(
-        "message",
+        'message',
         description = 'Enter your message',
-        required = True
+        required = False,
+        default = None
     )
-    async def _send_message(self, ctx: discord.ApplicationContext, message: str):
+    @discord.commands.option(
+        'attachments',
+        description = 'Attach images, seperate each urls with a space (max 10)',
+        required = False,
+        default = ''
+    )
+    async def _send_message(self, ctx: discord.ApplicationContext, message: str, attachments: str):
         await ctx.delete()
         avatar = db.init_avatar_from_db(ctx)
         webhook = await Avatar.get_webhook(ctx)
 
         (name, avatar_url, *other) = avatar.get_detail_in_guild(ctx.guild)
-        
-        await webhook.send(content=message, avatar_url=avatar_url, username=name)
+
+        attachments = attachments.split()
+        files = []
+        for url in attachments:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as resp:
+                    img = await resp.read()
+                    with io.BytesIO(img) as file:
+                        files.append(discord.File(file, 'image.png'))
+
+        await webhook.send(content=message, avatar_url=avatar_url, username=name, files=files)
 
 
     @commands.guild_only()
