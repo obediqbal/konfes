@@ -2,6 +2,8 @@
 
 Konfes allows users to send a message anonymously to a server through their own unique configurable avatar. Anonymous voice channel speaking may also be implemented soon.
 
+[Add Konfes to your server](https://discord.com/api/oauth2/authorize?client_id=1009855361152458802&permissions=1085053337152&scope=bot)
+
 ## Deploying Locally
 
 ### Prerequisites
