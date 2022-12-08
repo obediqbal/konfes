@@ -41,7 +41,10 @@ class Messaging(commands.Cog):
                 async with session.get(url) as resp:
                     img = await resp.read()
                     with io.BytesIO(img) as file:
+                        print(file)
                         files.append(discord.File(file, 'image.png'))
+
+        print(files)
 
         await webhook.send(content=message, avatar_url=avatar_url, username=name, files=files)
 
