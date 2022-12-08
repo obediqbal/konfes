@@ -1,0 +1,22 @@
+{
+    "embeds": [
+        {
+            "type": "rich",
+            "title": "Konfes Help",
+            "description": "Konfes allows you to send a message anonymously to a server through your unique configurable avatar. Konfes is open source at https://github.com/obediqbal/konfes",
+            "color": 14079702,
+            "fields": [
+            {
+                "name": "Commands:",
+                "value": "***/send***\nSend a message anonymously through your avatar. \n\n***/avatar***\nSetup the configuration of your avatar. Default is *Anonymous*.\n\n***/help***\nLearn about my commands",
+                "inline": true
+            }
+            ],
+            "thumbnail": {
+                "url": "https://raw.githubusercontent.com/obediqbal/konfes/main/img/konfes.png",
+                "height": 0,
+                "width": 0
+            }
+        }
+    ]
+}

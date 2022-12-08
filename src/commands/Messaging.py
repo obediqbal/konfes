@@ -7,6 +7,7 @@ import database as db
 import traceback
 import aiohttp
 import io
+import json
 
 #https://i.imgur.com/dOzAFCx.png
 class Messaging(commands.Cog):
@@ -82,6 +83,16 @@ class Messaging(commands.Cog):
         db.update_avatar_to_db(avatar)
 
         await ctx.interaction.response.send_message(content='Your avatar has been successfully reconfigured!', ephemeral=True)
+
+
+    @discord.slash_command(name='help', description='Learn about my commands')
+    async def _help(self, ctx: discord.ApplicationContext):
+        with open('src/commands/help.json', 'r') as file:
+            embed_json = json.load(file)['embeds']
+
+        embed = discord.Embed.from_dict(embed_json[0])
+        
+        await ctx.interaction.response.send_message(embed=embed)
 
 
     @commands.command()
