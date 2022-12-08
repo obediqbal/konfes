@@ -41,13 +41,14 @@ class Messaging(commands.Cog):
                 async with session.get(url) as resp:
                     img = await resp.read()
                     with io.BytesIO(img) as file:
-                        print(file)
                         files.append(discord.File(file, 'image.png'))
 
-        print(files)
 
-        await webhook.send(content=message, avatar_url=avatar_url, username=name, files=files)
-        await ctx.interaction.followup.send(content='Message sent!', ephemeral=True, delete_after=1.0)
+        if (message==None and files==[]):
+            await ctx.interaction.followup.send(content='Can\'t send an empty message!', ephemeral=True, delete_after=5.0)
+        else:
+            await webhook.send(content=message, avatar_url=avatar_url, username=name, files=files)
+            await ctx.interaction.followup.send(content='Message sent!', ephemeral=True, delete_after=1.0)
 
 
     @commands.guild_only()
