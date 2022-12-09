@@ -2,6 +2,7 @@ import discord
 import database as db
 from avatar import Avatar
 from utils import Utils
+import datetime
 
 async def refer_message_callback(message: discord.Message, ctx: discord.ApplicationContext):
     avatar = db.init_avatar_from_db(ctx)
@@ -12,18 +13,13 @@ async def refer_message_callback(message: discord.Message, ctx: discord.Applicat
     embed_dict = {
             "type": "rich",
             "color": 14079702,
-            "description": message.content,
-            "fields": [
-                {
-                    "name": '\u200B',
-                    "value": f'[Jump!]({message.jump_url})'
-                }
-            ],
+            "description": f'[\[#\]]({message.jump_url}) {message.content}',
             "author": {
                 "name": message.author.name,
                 "url": message.jump_url,
                 "icon_url": message.author.display_avatar.url
-            }
+            },
+            "timestamp": message.created_at.isoformat('T')
         }
     embed = discord.Embed.from_dict(embed_dict)
     
