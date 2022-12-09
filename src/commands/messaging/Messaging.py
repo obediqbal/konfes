@@ -3,7 +3,7 @@ from discord import Webhook
 from discord.ext import commands
 from avatar import Avatar
 from utils import Utils
-from modals import Modal
+# from modals import Modal
 import commands.messaging.callbacks as callbacks
 import database as db
 import traceback
