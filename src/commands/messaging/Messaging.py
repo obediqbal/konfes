@@ -87,6 +87,7 @@ class Messaging(commands.Cog):
         default = None
     )
     async def _set_avatar(self, ctx: discord.ApplicationContext, nickname:str, avatar_url:str):
+        await ctx.interaction.response.defer(ephemeral=True)
         if(nickname == None and avatar_url==None):
             await ctx.delete()
             return
@@ -102,7 +103,7 @@ class Messaging(commands.Cog):
         
         db.update_avatar_to_db(avatar)
 
-        await ctx.interaction.response.send_message(content='Your avatar has been successfully reconfigured!', ephemeral=True)
+        await ctx.interaction.followup.send(content='Your avatar has been successfully reconfigured!', ephemeral=True)
 
 
     # @discord.commands.message_command(name='Reply')
