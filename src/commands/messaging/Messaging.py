@@ -2,12 +2,9 @@ import discord
 from discord import Webhook
 from discord.ext import commands
 from avatar import Avatar
-from random import randint
+from utils import Utils
 import database as db
 import traceback
-import aiohttp
-import io
-import json
 
 #https://i.imgur.com/dOzAFCx.png
 class Messaging(commands.Cog):
@@ -24,7 +21,7 @@ class Messaging(commands.Cog):
     )
     @discord.commands.option(
         'attachments',
-        description = 'Attach images, seperate each urls with a space (max 10)',
+        description = 'Attach images, seperate each urls with a space',
         required = False,
         default = ''
     )
@@ -36,14 +33,7 @@ class Messaging(commands.Cog):
         (name, avatar_url, *other) = avatar.get_detail_in_guild(ctx.guild)
 
         attachments = attachments.split()
-        files = []
-        for url in attachments:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url) as resp:
-                    img = await resp.read()
-                    with io.BytesIO(img) as file:
-                        files.append(discord.File(file, 'image.png'))
-
+        files = await Utils.load_images_from_urls(attachments, parse_to_discord=True)
 
         if (message==None and files==[]):
             await ctx.interaction.followup.send(content='Can\'t send an empty message!', ephemeral=True, delete_after=5.0)
@@ -85,24 +75,14 @@ class Messaging(commands.Cog):
         await ctx.interaction.response.send_message(content='Your avatar has been successfully reconfigured!', ephemeral=True)
 
 
-    @discord.slash_command(name='help', description='Learn about my commands')
-    async def _help(self, ctx: discord.ApplicationContext):
-        with open('src/commands/help.json', 'r') as file:
-            embed_json = json.load(file)['embeds']
-
-        embed = discord.Embed.from_dict(embed_json[0])
-        
-        await ctx.interaction.response.send_message(embed=embed)
-
-
     @discord.commands.message_command(name='Reply')
     async def _reply(self, message: discord.Message, ctx: discord.ApplicationContext):
         message_input = discord.ui.InputText(label='Message', style=discord.InputTextStyle.long)
         attachments_input = discord.ui.InputText(label='Attachments', style=discord.InputTextStyle.long)
         modal = discord.ui.Modal(message_input, attachments_input, title='Reply')
-        await modal.callback()
-        await message.interaction.response.send_modal(modal)
 
+        await modal.on_submit()
+        await message.interaction.response.send_modal(modal)
 
 
     @commands.command()

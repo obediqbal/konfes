@@ -12,7 +12,10 @@ from dotenv import load_dotenv
 class Bot(commands.Bot):
     def __init__(self) -> None:
         super().__init__(intents= discord.Intents.all(), command_prefix='!') 
-        self.load_extension('commands.Messaging')
+        self.load_extensions(
+            'commands.messaging.Messaging',
+            'commands.helper'
+            )
 
 
     async def on_ready(self):
