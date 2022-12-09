@@ -95,6 +95,16 @@ class Messaging(commands.Cog):
         await ctx.interaction.response.send_message(embed=embed)
 
 
+    @discord.commands.message_command(name='Reply')
+    async def _reply(self, message: discord.Message, ctx: discord.ApplicationContext):
+        message_input = discord.ui.InputText(label='Message', style=discord.InputTextStyle.long)
+        attachments_input = discord.ui.InputText(label='Attachments', style=discord.InputTextStyle.long)
+        modal = discord.ui.Modal(message_input, attachments_input, title='Reply')
+        await modal.callback()
+        await message.interaction.response.send_modal(modal)
+
+
+
     @commands.command()
     async def ping(self, ctx):
         await ctx.send('Pong!')
