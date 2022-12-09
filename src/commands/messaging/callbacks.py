@@ -2,7 +2,7 @@ import discord
 import database as db
 from avatar import Avatar
 from utils import Utils
-import datetime
+# import datetime
 
 async def refer_message_callback(message: discord.Message, ctx: discord.ApplicationContext):
     avatar = db.init_avatar_from_db(ctx)
@@ -19,7 +19,7 @@ async def refer_message_callback(message: discord.Message, ctx: discord.Applicat
                 "url": message.jump_url,
                 "icon_url": message.author.display_avatar.url
             },
-            "timestamp": message.created_at.isoformat('T')
+            # "timestamp": message.created_at.isoformat('T')
         }
     embed = discord.Embed.from_dict(embed_dict)
     
