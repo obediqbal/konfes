@@ -3,6 +3,8 @@ from discord import Webhook
 from discord.ext import commands
 from avatar import Avatar
 from utils import Utils
+from modals import Modal
+import commands.messaging.callbacks as callbacks
 import database as db
 import traceback
 
@@ -26,20 +28,34 @@ class Messaging(commands.Cog):
         default = ''
     )
     async def _send_message(self, ctx: discord.ApplicationContext, message: str, attachments: str):
-        await ctx.interaction.response.defer(ephemeral=True)
-        avatar = db.init_avatar_from_db(ctx)
-        webhook = await Avatar.get_webhook(ctx)
+        await callbacks.send_message_callback(ctx=ctx, message=message, attachments=attachments)
 
-        (name, avatar_url, *other) = avatar.get_detail_in_guild(ctx.guild)
 
-        attachments = attachments.split()
-        files = await Utils.load_images_from_urls(attachments, parse_to_discord=True)
+    @commands.guild_only()
+    @discord.slash_command(name='reply', description='Reply to a message')
+    @discord.commands.option(
+        'message_id',
+        description = 'ID of the message you are replying to',
+        required = True
+    )
+    @discord.commands.option(
+        'message',
+        description = 'Enter your message',
+        required = False,
+        default = None
+    )
+    @discord.commands.option(
+        'attachments',
+        description = 'Attach images, seperate each urls with a space',
+        required = False,
+        default = ''
+    )
+    async def _reply_message(self, ctx: discord.ApplicationContext, message_id: str, message: str, attachments: str):
+        message_id = int(message_id)
+        refer = await ctx.channel.fetch_message(message_id)
 
-        if (message==None and files==[]):
-            await ctx.interaction.followup.send(content='Can\'t send an empty message!', ephemeral=True, delete_after=5.0)
-        else:
-            await webhook.send(content=message, avatar_url=avatar_url, username=name, files=files)
-            await ctx.interaction.followup.send(content='Message sent!', ephemeral=True, delete_after=1.0)
+        await callbacks.refer_message_callback(refer, ctx)
+        await callbacks.send_message_callback(ctx, message=message, attachments=attachments)
 
 
     @commands.guild_only()
@@ -75,14 +91,14 @@ class Messaging(commands.Cog):
         await ctx.interaction.response.send_message(content='Your avatar has been successfully reconfigured!', ephemeral=True)
 
 
-    @discord.commands.message_command(name='Reply')
-    async def _reply(self, message: discord.Message, ctx: discord.ApplicationContext):
-        message_input = discord.ui.InputText(label='Message', style=discord.InputTextStyle.long)
-        attachments_input = discord.ui.InputText(label='Attachments', style=discord.InputTextStyle.long)
-        modal = discord.ui.Modal(message_input, attachments_input, title='Reply')
-
-        await modal.on_submit()
-        await message.interaction.response.send_modal(modal)
+    # @discord.commands.message_command(name='Reply')
+    # async def _reply(self, message: discord.Message, ctx: discord.ApplicationContext):
+    #     print(message.message)
+    #     print(message.interaction.id)
+    #     print(message.interaction.message)
+    #     print(await message.interaction.original_response())
+    #     modal = Modal.reply_modal(ctx=message)
+    #     await message.interaction.response.send_modal(modal)
 
 
     @commands.command()
