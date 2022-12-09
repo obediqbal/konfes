@@ -31,7 +31,7 @@ class Messaging(commands.Cog):
         await ctx.interaction.response.defer(ephemeral=True)
 
         await callbacks.send_message_callback(ctx=ctx, message=message, attachments=attachments)
-        
+
         await ctx.interaction.followup.send(content='Success', ephemeral=True, delete_after=1.0)
 
 
@@ -61,9 +61,10 @@ class Messaging(commands.Cog):
         refer = await ctx.channel.fetch_message(message_id)
 
         if(refer == None):
-            raise discord.NotFound
+            raise discord.errors.NotFound
         elif(refer.content == '' or (message==None and attachments=='')):
-            await ctx.interaction.response.send_message('Failed', ephemeral=True, delete_after=5.0)
+            raise discord.errors.InvalidArgument
+            # await ctx.interaction.response.send_message('Failed', ephemeral=True, delete_after=5.0)
         else:
             await callbacks.refer_message_callback(refer, ctx)
             await callbacks.send_message_callback(ctx, message=message, attachments=attachments)
@@ -127,8 +128,9 @@ class Messaging(commands.Cog):
         if isinstance(error, commands.errors.NoPrivateMessage):
             await interaction.response.send_message(error)
         if isinstance(error.original, discord.errors.NotFound):
-            await interaction.response.send_message('Message not found', ephemeral=True)
+            await interaction.followup.send('Message not found', ephemeral=True, delete_after=5.0)
         else:
+            await interaction.followup.send('Failed', ephemeral=True, delete_after=5.0)
             traceback.print_exc()
 
 
