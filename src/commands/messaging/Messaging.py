@@ -28,7 +28,11 @@ class Messaging(commands.Cog):
         default = ''
     )
     async def _send_message(self, ctx: discord.ApplicationContext, message: str, attachments: str):
+        await ctx.interaction.response.defer(ephemeral=True)
+
         await callbacks.send_message_callback(ctx=ctx, message=message, attachments=attachments)
+        
+        await ctx.interaction.followup.send(content='Success', ephemeral=True, delete_after=1.0)
 
 
     @commands.guild_only()
@@ -51,6 +55,8 @@ class Messaging(commands.Cog):
         default = ''
     )
     async def _reply_message(self, ctx: discord.ApplicationContext, message_id: str, message: str, attachments: str):
+        await ctx.interaction.response.defer(ephemeral=True)
+
         message_id = int(message_id)
         refer = await ctx.channel.fetch_message(message_id)
 
@@ -61,6 +67,8 @@ class Messaging(commands.Cog):
         else:
             await callbacks.refer_message_callback(refer, ctx)
             await callbacks.send_message_callback(ctx, message=message, attachments=attachments)
+
+        await ctx.interaction.followup.send(content='Success', ephemeral=True, delete_after=1.0)
 
 
     @commands.guild_only()

@@ -27,7 +27,6 @@ async def refer_message_callback(message: discord.Message, ctx: discord.Applicat
 
 
 async def send_message_callback(ctx: discord.ApplicationContext, message: str, attachments: str):
-    await ctx.interaction.response.defer(ephemeral=True)
     avatar = db.init_avatar_from_db(ctx)
     webhook = await Avatar.get_webhook(ctx)
 
@@ -40,4 +39,3 @@ async def send_message_callback(ctx: discord.ApplicationContext, message: str, a
         await ctx.interaction.followup.send(content='Can\'t send an empty message!', ephemeral=True, delete_after=5.0)
     else:
         await webhook.send(content=message, avatar_url=avatar_url, username=name, files=files)
-        await ctx.interaction.followup.send(content='Message sent!', ephemeral=True, delete_after=1.0)
