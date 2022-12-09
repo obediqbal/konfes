@@ -54,8 +54,13 @@ class Messaging(commands.Cog):
         message_id = int(message_id)
         refer = await ctx.channel.fetch_message(message_id)
 
-        await callbacks.refer_message_callback(refer, ctx)
-        await callbacks.send_message_callback(ctx, message=message, attachments=attachments)
+        if(refer == None):
+            raise discord.NotFound
+        elif(refer.content == '' or (message==None and attachments=='')):
+            await ctx.interaction.response.send_message('Failed', ephemeral=True, delete_after=5.0)
+        else:
+            await callbacks.refer_message_callback(refer, ctx)
+            await callbacks.send_message_callback(ctx, message=message, attachments=attachments)
 
 
     @commands.guild_only()
@@ -107,10 +112,14 @@ class Messaging(commands.Cog):
 
 
     @_send_message.error
+    @_reply_message.error
     @_set_avatar.error
-    async def private_message_error(self, interaction:discord.Interaction, error):
+    async def message_error(self, interaction:discord.Interaction, error):
+        print(type(error))
         if isinstance(error, commands.errors.NoPrivateMessage):
             await interaction.response.send_message(error)
+        if isinstance(error.original, discord.errors.NotFound):
+            await interaction.response.send_message('Message not found', ephemeral=True)
         else:
             traceback.print_exc()
 
