@@ -14,6 +14,7 @@ class Bot(commands.Bot):
         super().__init__(intents= discord.Intents.all(), command_prefix='!') 
         self.load_extensions(
             'commands.messaging.Messaging',
+            'commands.messaging.Config',
             'commands.helper'
             )
 
