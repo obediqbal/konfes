@@ -42,7 +42,7 @@ class Config(commands.Cog):
 
 
     @commands.guild_only()
-    @discord.slash_command(name='morph', description='Morph as the sender of a message')
+    @discord.slash_command(name='morph', description='Morph into someone\'s avatar')
     @discord.commands.option(
         'message_id',
         description = 'The message of someone you want to morph into',
