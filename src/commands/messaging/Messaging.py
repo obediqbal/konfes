@@ -59,15 +59,12 @@ class Messaging(commands.Cog):
 
         message_id = int(message_id)
         refer = await ctx.channel.fetch_message(message_id)
-
         if(refer == None):
             raise discord.errors.NotFound
-        elif(refer.content == '' or (message==None and attachments=='')):
+        elif((refer.content == '' and refer.attachments == []) or (message==None and attachments=='')):
             raise discord.errors.InvalidArgument
-            # await ctx.interaction.response.send_message('Failed', ephemeral=True, delete_after=5.0)
         else:
-            await callbacks.refer_message_callback(refer, ctx)
-            await callbacks.send_message_callback(ctx, message=message, attachments=attachments)
+            await callbacks.send_message_callback(ctx, message=message, attachments=attachments, refer=refer)
 
         await ctx.interaction.followup.send(content='Success', ephemeral=True, delete_after=1.0)
 
