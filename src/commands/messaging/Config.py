@@ -41,10 +41,36 @@ class Config(commands.Cog):
         await ctx.interaction.followup.send(content='Your avatar has been successfully reconfigured!', ephemeral=True)
 
 
+    @commands.guild_only()
+    @discord.slash_command(name='morph', description='Morph as the sender of a message')
+    @discord.commands.option(
+        'message_id',
+        description = 'The message of someone you want to morph into',
+        required = True
+    )
+    async def _morph(self, ctx: discord.ApplicationContext, message_id: str):
+        await ctx.interaction.response.defer(ephemeral=True)
+
+        avatar = db.init_avatar_from_db(ctx)
+        
+        message_id = int(message_id)
+        refer = await ctx.channel.fetch_message(message_id)
+        if refer==None:
+            raise discord.errors.NotFound
+
+        avatar.set_detail_in_guild(ctx.guild, name=refer.author.display_name, asset_url=refer.author.display_avatar.url)
+        db.update_avatar_to_db(avatar)
+
+        await ctx.interaction.followup.send(content=f'Successfully morphed into {refer.author.display_name}', ephemeral=True)
+
+
     @_set_avatar.error
+    @_morph.error
     async def handler(self, interaction: discord. Interaction, error):
         if isinstance(error.original, exceptions.AllOptionsUnselectedException):
             await interaction.followup.send(error.original, ephemeral=True)
+        if isinstance(error.original, discord.errors.NotFound):
+            await interaction.followup.send('Message not found', ephemeral=True)
 
 
 def setup(bot: commands.Bot):
