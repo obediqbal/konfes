@@ -23,6 +23,7 @@ class Utils:
         return files
 
     
+    @staticmethod
     def get_refer_embed(refer: discord.Message):
         if refer==None:
             return None
