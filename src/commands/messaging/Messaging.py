@@ -69,40 +69,6 @@ class Messaging(commands.Cog):
         await ctx.interaction.followup.send(content='Success', ephemeral=True, delete_after=1.0)
 
 
-    # @commands.guild_only()
-    # @discord.slash_command(name='avatar', description='Setup the configuration of your avatar')
-    # @discord.commands.option(
-    #     'nickname',
-    #     description = 'This is the name that appears when sending messages',
-    #     required = False,
-    #     default = None
-    # )
-    # @discord.commands.option(
-    #     'avatar_url',
-    #     description = 'This is the profile picture of your avatar',
-    #     required = False,
-    #     default = None
-    # )
-    # async def _set_avatar(self, ctx: discord.ApplicationContext, nickname:str, avatar_url:str):
-    #     await ctx.interaction.response.defer(ephemeral=True)
-    #     if(nickname == None and avatar_url==None):
-    #         await ctx.delete()
-    #         return
-
-    #     avatar = db.init_avatar_from_db(ctx)
-
-    #     new_name, new_avatar_url, *other = avatar.get_detail_in_guild(ctx.guild)
-    #     if(nickname != None):
-    #         new_name = nickname
-    #     if(avatar_url != None):
-    #         new_avatar_url = avatar_url
-    #     avatar.set_detail_in_guild(ctx.guild, name=new_name, asset_url=new_avatar_url)
-        
-    #     db.update_avatar_to_db(avatar)
-
-    #     await ctx.interaction.followup.send(content='Your avatar has been successfully reconfigured!', ephemeral=True)
-
-
     # @discord.commands.message_command(name='Reply')
     # async def _reply(self, message: discord.Message, ctx: discord.ApplicationContext):
     #     print(message.message)
