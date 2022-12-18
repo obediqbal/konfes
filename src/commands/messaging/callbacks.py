@@ -1,15 +1,15 @@
 import discord
-import database as db
+from database import Database
 from avatar import Avatar
 from utils import Utils
 # import datetime
 
-async def send_message_callback(ctx: discord.ApplicationContext, message: str, attachments: str, refer: discord.Message = None):
-    avatar = db.init_avatar_from_db(ctx)
-    webhook = await Avatar.get_webhook(ctx)
+async def send_message_callback(ctx: discord.ApplicationContext, message: str, attachments: str, db: Database, refer: discord.Message = None):
+    avatar = db.init_avatar(ctx.author.id, ctx.guild_id)
+    webhook = await Avatar.get_webhook(ctx.channel)
     embed = Utils.get_refer_embed(refer)
 
-    (name, avatar_url, *other) = avatar.get_detail_in_guild(ctx.guild)
+    (name, avatar_url, *other) = avatar.get_detail_in_guild(ctx.guild_id)
 
     attachments = attachments.split()
     files = await Utils.load_images_from_urls(attachments, parse_to_discord=True)

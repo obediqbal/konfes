@@ -28,19 +28,19 @@ class Avatar:
         return guild.get_member(self.get_user_id())
 
 
-    def get_detail_in_guild(self, guild: discord.Guild) -> tuple:
+    def get_detail_in_guild(self, guild_id: int) -> tuple:
         # guild_id = guild.id
         # return (self.details.get(guild_id).get('name'), self.details.get(guild_id).get('asset_url'))
-        detail = self.details.get(guild.id)
+        detail = self.details.get(guild_id)
         return tuple(detail.get(key) for key in detail)
 
 
-    def is_defined_in_guild(self, guild: discord.Guild) -> bool:
-        return guild.id in self.details.keys()
+    def is_defined_in_guild(self, guild_id: int) -> bool:
+        return guild_id in self.details.keys()
 
 
-    def set_detail_in_guild(self, guild: discord.Guild, **kwargs) -> None:
-        detail = {guild.id: kwargs}
+    def set_detail_in_guild(self, guild_id: int, **kwargs) -> None:
+        detail = {guild_id: kwargs}
         self.details.update(detail)
 
 
@@ -63,11 +63,11 @@ class Avatar:
 
 
     @staticmethod
-    async def get_webhook(ctx: discord.ApplicationContext) -> discord.Webhook:
-        webhooks = await ctx.channel.webhooks()
+    async def get_webhook(channel: discord.TextChannel) -> discord.Webhook:
+        webhooks = await channel.webhooks()
         webhook = [x for x in webhooks if x.name == 'konfes']
         if len(webhook)==0:
-            webhook = await ctx.channel.create_webhook(name = 'konfes')
+            webhook = await channel.create_webhook(name = 'konfes')
         else:
             webhook = webhook[0]
 

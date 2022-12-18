@@ -1,16 +1,15 @@
 import discord
-from discord import Webhook
 from discord.ext import commands
-from avatar import Avatar
-from utils import Utils
+from bot import KonfesBot
 # from modals import Modal
 import commands.messaging.callbacks as callbacks
 # import database as db
+
 import traceback
 
 #https://i.imgur.com/dOzAFCx.png
 class Messaging(commands.Cog):
-    def __init__(self, bot:commands.Bot):
+    def __init__(self, bot: KonfesBot):
         self.bot = bot
 
     @commands.guild_only()
@@ -30,7 +29,7 @@ class Messaging(commands.Cog):
     async def _send_message(self, ctx: discord.ApplicationContext, message: str, attachments: str):
         await ctx.interaction.response.defer(ephemeral=True)
 
-        await callbacks.send_message_callback(ctx=ctx, message=message, attachments=attachments)
+        await callbacks.send_message_callback(ctx=ctx, message=message, attachments=attachments, db=self.bot.db)
 
         await ctx.interaction.followup.send(content='Success', ephemeral=True, delete_after=1.0)
 
@@ -64,7 +63,7 @@ class Messaging(commands.Cog):
         elif((refer.content == '' and refer.attachments == []) or (message==None and attachments=='')):
             raise discord.errors.InvalidArgument
         else:
-            await callbacks.send_message_callback(ctx, message=message, attachments=attachments, refer=refer)
+            await callbacks.send_message_callback(ctx, message=message, attachments=attachments, refer=refer, db=self.bot.db)
 
         await ctx.interaction.followup.send(content='Success', ephemeral=True, delete_after=1.0)
 
